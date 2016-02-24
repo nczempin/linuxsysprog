@@ -20,12 +20,17 @@
 
 
 void perms(mode_t mode){
-	if (mode & S_IFDIR){
-		printf("d");
-	}else {
-		printf("-");
-	}
-	printf("rwxrwxr-x");
+	printf(mode & S_IFDIR ? "d":"-");
+	printf(mode & S_IRUSR ? "r":"-");
+	printf(mode & S_IWUSR ? "w":"-");
+	printf(mode & S_IXUSR ? "x":"-");
+	printf(mode & S_IRGRP ? "r":"-");
+	printf(mode & S_IWGRP ? "w":"-");
+	printf(mode & S_IXGRP ? "x":"-");
+	printf(mode & S_IROTH ? "r":"-");
+	printf(mode & S_IWOTH ? "w":"-");
+	printf(mode & S_IXOTH ? "x":"-");
+
 }
 
 struct linux_dirent {
@@ -37,7 +42,6 @@ struct linux_dirent {
 
 //TODO: sort
 //TODO: colour
-//TODO: actual permissions
 //TODO: line formatting
 
 int main()
