@@ -44,17 +44,17 @@ struct linux_dirent {
 //TODO: sort
 //TODO: colour
 //TODO: line formatting
+//TODO: clean up variables, readability
 
 int main()
 {
-    struct linux_dirent *dir;
+    struct linux_dirent *dir,*d;
     struct stat st;
     struct passwd *pw;
     struct group *grp;
     char buf[BUFSZ], *bp;
     char buf2[160];
     int dfd, nread;
-    struct linux_dirent *d;
     int bpos;
 
     dfd = open(".", O_RDONLY|O_DIRECTORY);
@@ -63,7 +63,7 @@ int main()
     }
     memset(buf, 0, BUFSZ);
     for( ; ; ) {
-        nread = syscall(SYS_getdents,dfd, buf, BUFSZ);
+        nread = syscall(SYS_getdents, dfd, buf, BUFSZ);
         if (nread == -1) {
             handle_error("getdents");
         }
