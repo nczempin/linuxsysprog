@@ -41,34 +41,18 @@ void print_perms(mode_t mode)
 
 }
 
-void print_dir_entry(char *buf, int nread)
+int cmpfunc (const void * a, const void * b)
 {
+	return -( *(int*)a - *(int*)b );
+}
+void display_dir_entries(char *buf, int *entry, int n){
 	struct linux_dirent *d;
 	struct stat st;
 	struct passwd *pw;
 	struct group *grp;
 	char buf2[160];
-	int bpos;
-	int i = 0;
-	for (bpos = 0; bpos < nread;) {
-		d = (struct linux_dirent *) (buf + bpos);
-		bpos += d->d_reclen;
-		++i;
-	}
-	printf("%d entries\n", i);
-	int *entry = malloc(i * sizeof(int)); //TODO: dynamic structure?
-	i = 0;
-	for (bpos = 0; bpos < nread;) {
-		d = (struct linux_dirent *) (buf + bpos);
-		bpos += d->d_reclen;
-		if (d->d_reclen != 0) {
-			entry[i] = bpos;
-			i++;
-		}
-	}
-	printf("%d\n", i);
-	int n = i;
-  for (i = 0; i < n; ++i){	
+  int i;
+	for (i = 0; i < n; ++i){
 		d = (struct linux_dirent *) (buf + entry[i]);
 		if (d->d_reclen != 0) {
 			stat(d->d_name, &st);
@@ -89,6 +73,32 @@ void print_dir_entry(char *buf, int nread)
 			printf("%s\n", d->d_name);
 		}
 	}
+}
+
+void print_dir_entry(char *buf, int nread)
+{
+	struct linux_dirent *d;
+	int bpos;
+	int i = 0;
+	for (bpos = 0; bpos < nread;) {
+		d = (struct linux_dirent *) (buf + bpos);
+		bpos += d->d_reclen;
+		++i;
+	}
+	printf("%d entries\n", i);
+	int *entry = malloc(i * sizeof(int)); //TODO: dynamic structure?
+	i = 0;
+	for (bpos = 0; bpos < nread;) {
+		d = (struct linux_dirent *) (buf + bpos);
+		bpos += d->d_reclen;
+		if (d->d_reclen != 0) {
+			entry[i] = bpos;
+			i++;
+		}
+	}
+	printf("%d\n", i);
+	qsort(entry, i, sizeof(int), cmpfunc);
+	display_dir_entries(buf, entry, i);
 }
 
 
