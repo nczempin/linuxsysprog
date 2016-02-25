@@ -49,9 +49,27 @@ void print_dir_entry(char *buf, int nread)
 	struct group *grp;
 	char buf2[160];
 	int bpos;
+	int i = 0;
 	for (bpos = 0; bpos < nread;) {
 		d = (struct linux_dirent *) (buf + bpos);
 		bpos += d->d_reclen;
+		++i;
+	}
+	printf("%d entries\n", i);
+	int *entry = malloc(i * sizeof(int)); //TODO: dynamic structure?
+	i = 0;
+	for (bpos = 0; bpos < nread;) {
+		d = (struct linux_dirent *) (buf + bpos);
+		bpos += d->d_reclen;
+		if (d->d_reclen != 0) {
+			entry[i] = bpos;
+			i++;
+		}
+	}
+	printf("%d\n", i);
+	int n = i;
+  for (i = 0; i < n; ++i){	
+		d = (struct linux_dirent *) (buf + entry[i]);
 		if (d->d_reclen != 0) {
 			stat(d->d_name, &st);
 			ctime_r(&st.st_mtime,buf2);
