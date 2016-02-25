@@ -43,20 +43,16 @@ void print_perms(mode_t mode)
 
 void print_dir_entry(char *buf, int nread)
 {
-	struct linux_dirent *dir,*d;
+	struct linux_dirent *d;
 	struct stat st;
 	struct passwd *pw;
 	struct group *grp;
-	char *bp;
 	char buf2[160];
 	int bpos;
 	for (bpos = 0; bpos < nread;) {
 		d = (struct linux_dirent *) (buf + bpos);
 		bpos += d->d_reclen;
-
-		bp = buf;
-		dir = (struct linux_dirent *)buf;
-		if (dir->d_reclen != 0) {
+		if (d->d_reclen != 0) {
 			stat(d->d_name, &st);
 			ctime_r(&st.st_mtime,buf2);
 			buf2[16]='\0';
@@ -74,10 +70,7 @@ void print_dir_entry(char *buf, int nread)
 			printf("%s ", &buf2[4]);
 			printf("%s\n", d->d_name);
 		}
-		bp = bp + dir->d_reclen;
-		dir = (struct linux_dirent *)(bp);
 	}
-
 }
 
 
